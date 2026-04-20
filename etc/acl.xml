@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Panth Redirects — ACL
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Panth_Core::panth_extensions">
+                    <resource id="Panth_Redirects::manage"
+                              title="Redirects and 404s"
+                              sortOrder="40">
+                        <resource id="Panth_Redirects::redirects"
+                                  title="Manage Redirects"
+                                  sortOrder="10"/>
+                        <resource id="Panth_Redirects::not_found_log"
+                                  title="404 Log"
+                                  sortOrder="20"/>
+                        <resource id="Panth_Redirects::not_found_cluster"
+                                  title="404 Clusters"
+                                  sortOrder="30"/>
+                    </resource>
+                </resource>
+
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Panth_Redirects::config"
+                                      title="Panth Redirects Configuration"
+                                      sortOrder="300"/>
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

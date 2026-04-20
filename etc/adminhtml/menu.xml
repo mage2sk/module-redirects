@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Panth Redirects — Admin menu
+ * Adds four links under Panth Infotech: Manage Redirects (grid),
+ * 404 Log, 404 Clusters and Configuration.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Panth_Redirects::redirects"
+             title="Manage Redirects"
+             module="Panth_Redirects"
+             sortOrder="40"
+             parent="Panth_Core::panth_extensions"
+             action="panth_redirects/redirect/index"
+             resource="Panth_Redirects::redirects"/>
+
+        <add id="Panth_Redirects::not_found_log"
+             title="404 Log"
+             module="Panth_Redirects"
+             sortOrder="41"
+             parent="Panth_Core::panth_extensions"
+             action="panth_redirects/notfoundlog/index"
+             resource="Panth_Redirects::not_found_log"/>
+
+        <add id="Panth_Redirects::not_found_cluster"
+             title="404 Clusters"
+             module="Panth_Redirects"
+             sortOrder="42"
+             parent="Panth_Core::panth_extensions"
+             action="panth_redirects/notfoundcluster/index"
+             resource="Panth_Redirects::not_found_cluster"/>
+
+        <add id="Panth_Redirects::config_link"
+             title="Redirects Configuration"
+             module="Panth_Redirects"
+             sortOrder="43"
+             parent="Panth_Core::panth_extensions"
+             action="adminhtml/system_config/edit/section/panth_redirects"
+             resource="Panth_Redirects::config"/>
+    </menu>
+</config>

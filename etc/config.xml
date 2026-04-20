@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <panth_redirects>
+            <general>
+                <enabled>1</enabled>
+                <auto_redirect_enabled>1</auto_redirect_enabled>
+                <redirect_target_strategy>parent_category</redirect_target_strategy>
+                <redirect_custom_url></redirect_custom_url>
+                <lowercase_redirect>1</lowercase_redirect>
+                <homepage_redirect>1</homepage_redirect>
+                <remove_trailing_slash>0</remove_trailing_slash>
+                <expiry_days>365</expiry_days>
+            </general>
+            <logging>
+                <log_404>1</log_404>
+                <rate_limit_per_second>10</rate_limit_per_second>
+            </logging>
+        </panth_redirects>
+    </default>
+</config>

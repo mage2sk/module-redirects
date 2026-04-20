@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Interface bindings -->
+    <preference for="Panth\Redirects\Api\RedirectMatcherInterface"
+                type="Panth\Redirects\Model\Redirect\Matcher"/>
+
+    <!-- Console commands -->
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="panth_redirects_import" xsi:type="object">Panth\Redirects\Console\Command\RedirectImportCommand</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Grid Collections: real PHP classes extending SearchResult -->
+    <type name="Panth\Redirects\Model\ResourceModel\Redirect\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">panth_seo_redirect</argument>
+            <argument name="resourceModel" xsi:type="string">Panth\Redirects\Model\ResourceModel\Redirect</argument>
+        </arguments>
+    </type>
+    <type name="Panth\Redirects\Model\ResourceModel\NotFoundLog\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">panth_seo_404_log</argument>
+            <argument name="resourceModel" xsi:type="string">Panth\Redirects\Model\ResourceModel\NotFoundLog</argument>
+        </arguments>
+    </type>
+    <type name="Panth\Redirects\Model\ResourceModel\NotFoundCluster\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">panth_seo_404_cluster</argument>
+            <argument name="resourceModel" xsi:type="string">Panth\Redirects\Model\ResourceModel\NotFoundCluster</argument>
+        </arguments>
+    </type>
+
+    <!-- Register grid data sources -->
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="panth_redirects_redirect_listing_data_source" xsi:type="string">Panth\Redirects\Model\ResourceModel\Redirect\Grid\Collection</item>
+                <item name="panth_redirects_notfoundlog_listing_data_source" xsi:type="string">Panth\Redirects\Model\ResourceModel\NotFoundLog\Grid\Collection</item>
+                <item name="panth_redirects_notfoundcluster_listing_data_source" xsi:type="string">Panth\Redirects\Model\ResourceModel\NotFoundCluster\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

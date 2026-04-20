@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Panth Redirects — auto-redirect observers.
+ *
+ * We subscribe to `model_delete_before` (dispatched first in
+ * AbstractModel::beforeDelete) rather than `catalog_product_delete_before`
+ * so we run BEFORE Magento_CatalogUrlRewrite's `process_url_rewrite_removing`
+ * observer, which deletes the url_rewrite rows we need to read to build the
+ * 301 record.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="model_delete_before">
+        <observer name="panth_redirects_product_delete_before"
+                  instance="Panth\Redirects\Observer\Redirect\ProductDeleteBefore"/>
+        <observer name="panth_redirects_category_delete_before"
+                  instance="Panth\Redirects\Observer\Redirect\CategoryDeleteBefore"/>
+        <observer name="panth_redirects_cms_page_delete_before"
+                  instance="Panth\Redirects\Observer\Redirect\CmsPageDeleteBefore"/>
+    </event>
+</config>

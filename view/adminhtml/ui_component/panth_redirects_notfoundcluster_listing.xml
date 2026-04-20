@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">panth_redirects_notfoundcluster_listing.panth_redirects_notfoundcluster_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>panth_redirects_notfoundcluster_listing_columns</spinner>
+        <deps>
+            <dep>panth_redirects_notfoundcluster_listing.panth_redirects_notfoundcluster_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="panth_redirects_notfoundcluster_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">cluster_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider"
+                      name="panth_redirects_notfoundcluster_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>cluster_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <bookmark name="bookmarks"/>
+        <filters name="listing_filters"/>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="panth_redirects_notfoundcluster_listing_columns">
+        <column name="cluster_id">
+            <settings>
+                <label translate="true">ID</label>
+                <sorting>asc</sorting>
+                <filter>textRange</filter>
+            </settings>
+        </column>
+        <column name="store_id">
+            <settings>
+                <label translate="true">Store</label>
+                <filter>text</filter>
+            </settings>
+        </column>
+        <column name="pattern" class="Panth\Redirects\Ui\Component\Listing\Column\EscapeTextColumn">
+            <settings>
+                <label translate="true">Pattern</label>
+                <filter>text</filter>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+            </settings>
+        </column>
+        <column name="sample_url" class="Panth\Redirects\Ui\Component\Listing\Column\EscapeTextColumn">
+            <settings>
+                <label translate="true">Sample URL</label>
+                <filter>text</filter>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+            </settings>
+        </column>
+        <column name="hits">
+            <settings>
+                <label translate="true">Hits</label>
+                <filter>textRange</filter>
+                <sorting>desc</sorting>
+            </settings>
+        </column>
+        <column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <label translate="true">Created</label>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+            </settings>
+        </column>
+    </columns>
+</listing>

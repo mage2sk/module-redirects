@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Panth Redirects — DB schema.
+ *
+ * Table names are kept identical to the original Panth_AdvancedSEO schema
+ * (`panth_seo_redirect`, `panth_seo_404_log`, `panth_seo_404_cluster`) so that
+ * existing data is preserved when installing the split module on an upgraded
+ * site.
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+
+    <!-- ============================================================ -->
+    <!-- panth_seo_redirect                                             -->
+    <!-- ============================================================ -->
+    <table name="panth_seo_redirect" resource="default" engine="innodb" comment="Panth Redirect rules">
+        <column xsi:type="int" name="redirect_id" unsigned="true" nullable="false" identity="true" comment="Redirect ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="varchar" name="match_type" length="16" nullable="false" default="literal" comment="literal|regex|maintenance"/>
+        <column xsi:type="varchar" name="pattern" length="1024" nullable="false" comment="Pattern"/>
+        <column xsi:type="varchar" name="target" length="1024" nullable="false" comment="Target URL"/>
+        <column xsi:type="smallint" name="status_code" unsigned="true" nullable="false" default="301" comment="HTTP status code"/>
+        <column xsi:type="int" name="priority" unsigned="true" nullable="false" default="10" comment="Priority"/>
+        <column xsi:type="boolean" name="is_active" nullable="false" default="true" comment="Active"/>
+        <column xsi:type="int" name="hit_count" unsigned="true" nullable="false" default="0" comment="Hit counter"/>
+        <column xsi:type="timestamp" name="last_hit_at" on_update="false" nullable="true" comment="Last hit"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created at"/>
+        <column xsi:type="timestamp" name="start_at" on_update="false" nullable="true" comment="Redirect active from"/>
+        <column xsi:type="timestamp" name="finish_at" on_update="false" nullable="true" comment="Redirect active until"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated at"/>
+        <column xsi:type="boolean" name="is_auto_generated" nullable="false" default="false" comment="1 if auto-created by entity delete; 0 if admin-curated"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="redirect_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="PANTH_SEO_REDIRECT_STORE_ID_STORE_STORE_ID"
+                    table="panth_seo_redirect" column="store_id"
+                    referenceTable="store" referenceColumn="store_id" onDelete="CASCADE"/>
+        <index referenceId="PANTH_SEO_REDIRECT_IDX_STORE_ACTIVE" indexType="btree">
+            <column name="store_id"/>
+            <column name="is_active"/>
+            <column name="priority"/>
+        </index>
+        <index referenceId="PANTH_SEO_REDIRECT_IDX_PATTERN" indexType="btree">
+            <column name="pattern"/>
+        </index>
+    </table>
+
+    <!-- ============================================================ -->
+    <!-- panth_seo_404_log                                              -->
+    <!-- ============================================================ -->
+    <table name="panth_seo_404_log" resource="default" engine="innodb" comment="Panth 404 log">
+        <column xsi:type="int" name="log_id" unsigned="true" nullable="false" identity="true" comment="Log ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="varchar" name="request_path" length="1024" nullable="false" comment="Request path"/>
+        <column xsi:type="varchar" name="path_hash" length="64" nullable="false" comment="SHA256 of normalized path"/>
+        <column xsi:type="varchar" name="referer" length="1024" nullable="true" comment="Referer"/>
+        <column xsi:type="varchar" name="user_agent" length="512" nullable="true" comment="User agent"/>
+        <column xsi:type="int" name="hit_count" unsigned="true" nullable="false" default="1" comment="Hit count"/>
+        <column xsi:type="varchar" name="cluster_key" length="64" nullable="true" comment="Cluster key"/>
+        <column xsi:type="varchar" name="suggested_target" length="1024" nullable="true" comment="Suggested redirect target"/>
+        <column xsi:type="timestamp" name="first_seen_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="First seen"/>
+        <column xsi:type="timestamp" name="last_seen_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Last seen"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="log_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="PANTH_SEO_404_LOG_UNQ_STORE_HASH">
+            <column name="store_id"/>
+            <column name="path_hash"/>
+        </constraint>
+        <index referenceId="PANTH_SEO_404_LOG_IDX_CLUSTER" indexType="btree">
+            <column name="cluster_key"/>
+        </index>
+    </table>
+
+    <!-- ============================================================ -->
+    <!-- panth_seo_404_cluster                                          -->
+    <!-- ============================================================ -->
+    <table name="panth_seo_404_cluster" resource="default" engine="innodb" comment="Panth 404 clusters">
+        <column xsi:type="int" name="cluster_id" unsigned="true" nullable="false" identity="true" comment="Cluster ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="varchar" name="pattern" length="1024" nullable="false" comment="Normalized URL pattern"/>
+        <column xsi:type="int" name="hits" unsigned="true" nullable="false" default="0" comment="Total hit count"/>
+        <column xsi:type="varchar" name="sample_url" length="1024" nullable="true" comment="Sample URL"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created at"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="cluster_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="PANTH_SEO_404_CLUSTER_STORE_ID_STORE_STORE_ID"
+                    table="panth_seo_404_cluster" column="store_id"
+                    referenceTable="store" referenceColumn="store_id" onDelete="CASCADE"/>
+        <index referenceId="PANTH_SEO_404_CLUSTER_IDX_STORE_HITS" indexType="btree">
+            <column name="store_id"/>
+            <column name="hits"/>
+        </index>
+    </table>
+</schema>

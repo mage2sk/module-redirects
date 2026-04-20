@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <!-- Tab `panth` is declared by Panth_Core -->
+        <section id="panth_redirects" translate="label" type="text" sortOrder="65" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Redirects &amp; 404s</label>
+            <tab>panth</tab>
+            <resource>Panth_Redirects::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Auto Redirect on Delete</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Module</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Master switch for the Panth Redirects module. When disabled, no redirects are evaluated and no 404s are logged.</comment>
+                </field>
+                <field id="auto_redirect_enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Auto-Create Redirect on Entity Delete</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Automatically creates a 301 redirect when a product, category, or CMS page is deleted, preserving link equity.</comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+                <field id="redirect_target_strategy" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Redirect Target Strategy</label>
+                    <source_model>Panth\Redirects\Model\Config\Source\RedirectTargetStrategy</source_model>
+                    <comment>Determines where deleted entities redirect: parent category, homepage, or a custom URL.</comment>
+                    <depends><field id="auto_redirect_enabled">1</field></depends>
+                </field>
+                <field id="redirect_custom_url" translate="label comment" type="text" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Custom Redirect URL</label>
+                    <comment>Relative path only (e.g. /clearance). External URLs and ".." segments are rejected. Used when strategy is Custom URL.</comment>
+                    <depends>
+                        <field id="redirect_target_strategy">custom_url</field>
+                    </depends>
+                </field>
+                <field id="lowercase_redirect" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Redirect Uppercase URLs to Lowercase</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Automatically 301 redirects URLs containing uppercase characters to their lowercase equivalent to prevent duplicate content.</comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+                <field id="homepage_redirect" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>301 Redirect Homepage Aliases to Root</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Redirects /index.php, /home, /cms/index and similar aliases to the store base URL with a 301 status.</comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+                <field id="remove_trailing_slash" translate="label comment" type="select" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Remove Trailing Slash</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>301 redirects paths ending in "/" to the version without the trailing slash (canonical form).</comment>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+                <field id="expiry_days" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Redirect Expiry Days</label>
+                    <validate>validate-digits</validate>
+                    <comment>Never-used auto-generated redirects older than this many days are automatically cleaned up by cron. Default: 365.</comment>
+                </field>
+            </group>
+            <group id="logging" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>404 Logging</label>
+                <field id="log_404" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Log 404s for Clustering</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Records 404 Not Found hits for analysis and automatic redirect suggestion based on URL similarity clustering.</comment>
+                </field>
+                <field id="rate_limit_per_second" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>404 Logger Rate Limit (per second per IP)</label>
+                    <validate>validate-digits</validate>
+                    <comment>Maximum number of 404 log inserts allowed per IP per second. Prevents an attacker flooding the log table. Default: 10.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,32 @@
+<?php
+/**
+ * Redirects grid info banner.
+ *
+ * @var \Magento\Backend\Block\Template $block
+ * @var \Magento\Framework\Escaper      $escaper
+ */
+?>
+<div style="background:#FFF3E0;border:1px solid #FF9800;border-radius:4px;padding:15px 20px;margin-bottom:20px;font-size:13px;line-height:1.7;">
+    <strong style="font-size:14px;color:#E65100;"><?= $escaper->escapeHtml(__('Redirects & 404 Management')) ?></strong>
+    <p style="margin:8px 0 0;">
+        <?= $escaper->escapeHtml(__("Manage URL redirects to preserve SEO value when pages move, products are discontinued, or URLs change. All redirects are evaluated in real-time on every frontend request before Magento's routing.")) ?>
+    </p>
+
+    <div style="display:flex;gap:30px;margin-top:12px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:250px;">
+            <strong><?= $escaper->escapeHtml(__('Match Types:')) ?></strong>
+            <ul style="margin:4px 0 0;padding-left:18px;">
+                <li><code>literal</code> &mdash; <?= $escaper->escapeHtml(__('matches the URL path exactly')) ?></li>
+                <li><code>regex</code> &mdash; <?= $escaper->escapeHtml(__('uses regular expression matching (e.g. /blog/(.*) to /content/$1)')) ?></li>
+                <li><code>maintenance</code> &mdash; <?= $escaper->escapeHtml(__('returns HTTP 503 with the Target field as the response body')) ?></li>
+            </ul>
+        </div>
+        <div style="flex:1;min-width:250px;">
+            <strong><?= $escaper->escapeHtml(__('Status Codes:')) ?></strong>
+            <ul style="margin:4px 0 0;padding-left:18px;">
+                <li><code>301</code> &mdash; <?= $escaper->escapeHtml(__('Permanent redirect (preferred for SEO value)')) ?></li>
+                <li><code>302</code> &mdash; <?= $escaper->escapeHtml(__('Temporary redirect (sales, seasonal pages)')) ?></li>
+            </ul>
+        </div>
+    </div>
+</div>

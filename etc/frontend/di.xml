@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Panth Redirects — frontend-only DI.
+ *
+ * These plugins intentionally live in etc/frontend/di.xml and NEVER in
+ * etc/di.xml. Admin, API, and cron requests MUST NOT be processed by
+ * any of the URL-canonicalisation redirect plugins, otherwise we can
+ * accidentally break admin login forms, GraphQL endpoints, or queue
+ * workers with a silent 301.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Redirect plugins: MUST be frontend-only to avoid admin session interference -->
+    <type name="Magento\Framework\App\FrontControllerInterface">
+        <plugin name="panth_redirects_homepage"
+                type="Panth\Redirects\Plugin\Redirect\HomepageRedirectPlugin"
+                sortOrder="5"/>
+        <plugin name="panth_redirects_lowercase"
+                type="Panth\Redirects\Plugin\Redirect\LowercaseRedirectPlugin"
+                sortOrder="10"/>
+        <plugin name="panth_redirects_trailing_slash"
+                type="Panth\Redirects\Plugin\Redirect\TrailingSlashRedirectPlugin"
+                sortOrder="15"/>
+    </type>
+
+    <!-- 404 logger: intercepts NoRouteHandler to log all 404 requests -->
+    <type name="Magento\Framework\App\Router\NoRouteHandler">
+        <plugin name="panth_redirects_noroute_logger"
+                type="Panth\Redirects\Plugin\NoRouteLoggerPlugin"
+                sortOrder="100"/>
+    </type>
+
+    <!--
+        Block Magento core's UrlRewrite router from dispatching 301s on XHR /
+        non-GET requests. DbStorage::doFindOneByData() trims trailing slashes
+        and matches redirect_type=301 rows BEFORE any of our FrontController
+        plugins run, so RedirectGuard never sees the request. This plugin
+        short-circuits Router::match() on unsafe requests (XHR, non-GET, API)
+        by returning null, letting the request fall through to the natural
+        controller. Normal browser GET navigation is unaffected.
+    -->
+    <type name="Magento\UrlRewrite\Controller\Router">
+        <plugin name="panth_redirects_url_rewrite_xhr_guard"
+                type="Panth\Redirects\Plugin\UrlRewrite\RouterXhrGuard"
+                sortOrder="10"/>
+    </type>
+
+    <!-- UrlRewrite cleanup: record a redirect whenever a product's request_path changes -->
+    <type name="Magento\UrlRewrite\Model\ResourceModel\UrlRewrite">
+        <plugin name="panth_redirects_urlrewrite_cleanup"
+                type="Panth\Redirects\Plugin\UrlRewrite\CleanupPlugin"
+                sortOrder="20"/>
+    </type>
+</config>
