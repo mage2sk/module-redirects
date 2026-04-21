@@ -4,6 +4,33 @@ All notable changes to this extension are documented here. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - Bug fixes and quality improvements
+
+### Added
+
+- **Full HTTP status code picker** on the admin form — the Redirect Type
+  dropdown now offers every supported code (301, 302, 303, 307, 308, 410,
+  451, 503) instead of only 301/302. Codes are served from a shared
+  `Panth\Redirects\Model\Config\Source\StatusCode` source so the admin
+  form, Save validator and CSV importer agree on the canonical list.
+- **Download sample CSV** link on the Import screen. Emits a
+  ready-to-edit template with one row per supported match type so admins
+  can see the exact column order / value shape before uploading.
+- **Non-redirect status codes (410, 451, 503)** are now handled properly
+  by the frontend dispatcher — `setStatusHeader` + body, no bogus
+  `Location` header. 503 still emits `Retry-After`.
+
+### Fixed
+
+- **Scheduling columns stored `0000-00-00`** for dates past 2038 because
+  `start_at` / `finish_at` were declared as `timestamp`. Switched to
+  `datetime` so arbitrary future dates are persisted verbatim.
+- **404 logger recorded successful redirects.** `cms_index_noroute` and
+  `NoRouteHandlerInterface::process` both fired before the Predispatch
+  observer had a chance to issue the 301, so a matched redirect was
+  still counted as a 404. Both now consult the matcher and skip logging
+  when a redirect rule is about to fire.
+
 ## [1.0.0] - Initial release
 
 ### Added

@@ -6,6 +6,7 @@ namespace Panth\Redirects\Model\Redirect;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Exception\LocalizedException;
 use Panth\Redirects\Api\Data\RedirectRuleInterface;
+use Panth\Redirects\Model\Config\Source\StatusCode;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -183,7 +184,7 @@ class ImportExport
             return 'dangerous URI scheme in target';
         }
         $status = (int) $row['status_code'];
-        if (!in_array($status, [301, 302, 307, 308, 410, 451, 503], true)) {
+        if (!in_array($status, StatusCode::ALLOWED, true)) {
             return "invalid status_code {$status}";
         }
         if ($matchType === RedirectRuleInterface::MATCH_REGEX) {

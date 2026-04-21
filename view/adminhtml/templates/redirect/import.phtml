@@ -6,6 +6,7 @@
  * @var \Magento\Framework\Escaper      $escaper
  */
 $formAction = $block->getUrl('panth_redirects/redirect/import');
+$sampleUrl  = $block->getUrl('panth_redirects/redirect/sampleCsv');
 ?>
 <div class="admin__page-section">
     <div class="admin__page-section-title">
@@ -30,7 +31,7 @@ $formAction = $block->getUrl('panth_redirects/redirect/import');
                     <tr><td style="padding:6px;border:1px solid #ddd;font-family:monospace;">match_type</td><td style="padding:6px;border:1px solid #ddd;">Yes</td><td style="padding:6px;border:1px solid #ddd;"><?= $escaper->escapeHtml(__('literal, regex or maintenance')) ?></td></tr>
                     <tr><td style="padding:6px;border:1px solid #ddd;font-family:monospace;">pattern</td><td style="padding:6px;border:1px solid #ddd;">Yes</td><td style="padding:6px;border:1px solid #ddd;"><?= $escaper->escapeHtml(__('Source URL path (e.g. /old-page.html)')) ?></td></tr>
                     <tr><td style="padding:6px;border:1px solid #ddd;font-family:monospace;">target</td><td style="padding:6px;border:1px solid #ddd;">Yes</td><td style="padding:6px;border:1px solid #ddd;"><?= $escaper->escapeHtml(__('Destination URL')) ?></td></tr>
-                    <tr><td style="padding:6px;border:1px solid #ddd;font-family:monospace;">status_code</td><td style="padding:6px;border:1px solid #ddd;">Yes</td><td style="padding:6px;border:1px solid #ddd;">301, 302, 307, 308, 410, 451 or 503</td></tr>
+                    <tr><td style="padding:6px;border:1px solid #ddd;font-family:monospace;">status_code</td><td style="padding:6px;border:1px solid #ddd;">Yes</td><td style="padding:6px;border:1px solid #ddd;">301, 302, 303, 307, 308, 410, 451 or 503</td></tr>
                     <tr><td style="padding:6px;border:1px solid #ddd;font-family:monospace;">priority</td><td style="padding:6px;border:1px solid #ddd;">Yes</td><td style="padding:6px;border:1px solid #ddd;"><?= $escaper->escapeHtml(__('Lower number = higher priority')) ?></td></tr>
                     <tr><td style="padding:6px;border:1px solid #ddd;font-family:monospace;">is_active</td><td style="padding:6px;border:1px solid #ddd;">Yes</td><td style="padding:6px;border:1px solid #ddd;">0 or 1</td></tr>
                 </tbody>
@@ -48,6 +49,16 @@ $formAction = $block->getUrl('panth_redirects/redirect/import');
                 </label>
                 <div class="admin__field-control">
                     <input type="file" name="import_file" id="import_file" accept=".csv" required/>
+                    <div class="note" style="margin-top:6px;">
+                        <a href="<?= $escaper->escapeUrl($sampleUrl) ?>"
+                           style="display:inline-flex;align-items:center;gap:6px;color:#1976D2;text-decoration:underline;">
+                            <span>&#x2B07;</span>
+                            <span><?= $escaper->escapeHtml(__('Download sample CSV')) ?></span>
+                        </a>
+                        <span style="color:#666;margin-left:8px;">
+                            <?= $escaper->escapeHtml(__('— a ready-to-edit template with one row per supported match type.')) ?>
+                        </span>
+                    </div>
                 </div>
             </div>
             <div class="admin__field" style="margin-top: 20px;">

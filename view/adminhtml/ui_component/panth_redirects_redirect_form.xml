@@ -78,16 +78,7 @@
             <formElements>
                 <select>
                     <settings>
-                        <options>
-                            <option name="301" xsi:type="array">
-                                <item name="value" xsi:type="number">301</item>
-                                <item name="label" xsi:type="string" translate="true">301 (Permanent)</item>
-                            </option>
-                            <option name="302" xsi:type="array">
-                                <item name="value" xsi:type="number">302</item>
-                                <item name="label" xsi:type="string" translate="true">302 (Temporary)</item>
-                            </option>
-                        </options>
+                        <options class="Panth\Redirects\Model\Config\Source\StatusCode"/>
                     </settings>
                 </select>
             </formElements>

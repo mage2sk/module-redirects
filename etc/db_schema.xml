@@ -27,8 +27,8 @@
         <column xsi:type="int" name="hit_count" unsigned="true" nullable="false" default="0" comment="Hit counter"/>
         <column xsi:type="timestamp" name="last_hit_at" on_update="false" nullable="true" comment="Last hit"/>
         <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created at"/>
-        <column xsi:type="timestamp" name="start_at" on_update="false" nullable="true" comment="Redirect active from"/>
-        <column xsi:type="timestamp" name="finish_at" on_update="false" nullable="true" comment="Redirect active until"/>
+        <column xsi:type="datetime" name="start_at" on_update="false" nullable="true" comment="Redirect active from"/>
+        <column xsi:type="datetime" name="finish_at" on_update="false" nullable="true" comment="Redirect active until"/>
         <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated at"/>
         <column xsi:type="boolean" name="is_auto_generated" nullable="false" default="false" comment="1 if auto-created by entity delete; 0 if admin-curated"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">

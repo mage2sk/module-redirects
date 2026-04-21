@@ -6,6 +6,7 @@ namespace Panth\Redirects\Plugin;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\Router\NoRouteHandlerInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Panth\Redirects\Api\RedirectMatcherInterface;
 use Panth\Redirects\Helper\Config;
 use Panth\Redirects\Model\Redirect\NotFoundLogger;
 use Psr\Log\LoggerInterface;
@@ -20,7 +21,8 @@ class NoRouteLoggerPlugin
         private readonly NotFoundLogger $notFoundLogger,
         private readonly StoreManagerInterface $storeManager,
         private readonly Config $config,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly RedirectMatcherInterface $matcher
     ) {
     }
 
@@ -34,8 +36,16 @@ class NoRouteLoggerPlugin
                 return $result;
             }
 
-            $storeId   = (int) $this->storeManager->getStore()->getId();
-            $path      = (string) $request->getPathInfo();
+            $storeId = (int) $this->storeManager->getStore()->getId();
+            $path    = (string) $request->getPathInfo();
+
+            // This plugin runs BEFORE our Predispatch observer has a chance
+            // to intercept the request with a 301. Consult the matcher first
+            // so we don't record a 404 for a path that is about to redirect.
+            if ($this->matcher->match($path, $storeId) !== null) {
+                return $result;
+            }
+
             $referer   = (string) ($request->getServer('HTTP_REFERER') ?? '');
             $userAgent = (string) ($request->getServer('HTTP_USER_AGENT') ?? '');
 

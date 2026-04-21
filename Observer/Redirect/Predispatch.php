@@ -91,8 +91,22 @@ class Predispatch implements ObserverInterface
                 $target = '/' . $target;
             }
             $status = $rule->getStatusCode() ?: 301;
-            if (method_exists($this->response, 'setRedirect')) {
-                $this->response->setRedirect($target, $status);
+            if ($status >= 300 && $status < 400) {
+                if (method_exists($this->response, 'setRedirect')) {
+                    $this->response->setRedirect($target, $status);
+                }
+            } else {
+                // 4xx/5xx (410, 451, 503): no Location header — emit status
+                // and a short body so the client doesn't follow to `target`.
+                if (method_exists($this->response, 'setStatusHeader')) {
+                    $this->response->setStatusHeader($status, null, $this->reasonPhrase($status));
+                }
+                if (method_exists($this->response, 'setBody')) {
+                    $this->response->setBody((string) $rule->getTarget());
+                }
+                if ($status === 503 && method_exists($this->response, 'setHeader')) {
+                    $this->response->setHeader('Retry-After', '3600', true);
+                }
             }
             $this->actionFlag->set('', ActionInterface::FLAG_NO_DISPATCH, true);
 
@@ -128,5 +142,15 @@ class Predispatch implements ObserverInterface
             return false;
         }
         return true;
+    }
+
+    private function reasonPhrase(int $status): string
+    {
+        return match ($status) {
+            410 => 'Gone',
+            451 => 'Unavailable For Legal Reasons',
+            503 => 'Service Unavailable',
+            default => '',
+        };
     }
 }

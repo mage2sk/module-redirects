@@ -31,8 +31,17 @@ class NoRoute implements ObserverInterface
             if (!$this->config->isEnabled() || !$this->config->isLog404Enabled()) {
                 return;
             }
-            $storeId   = (int) $this->storeManager->getStore()->getId();
-            $path      = (string) $this->request->getPathInfo();
+            $storeId = (int) $this->storeManager->getStore()->getId();
+            $path    = (string) $this->request->getPathInfo();
+
+            // `cms_index_noroute` fires before `controller_action_predispatch`
+            // on the noroute action, so our Predispatch observer hasn't yet
+            // had a chance to issue the 301. Skip logging when a matching
+            // redirect rule exists — that path is not a real 404.
+            if ($this->matcher->match($path, $storeId) !== null) {
+                return;
+            }
+
             $referer   = (string) ($this->request->getServer('HTTP_REFERER') ?? '');
             $userAgent = (string) ($this->request->getServer('HTTP_USER_AGENT') ?? '');
             $this->matcher->log404(

@@ -9,6 +9,7 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Panth\Redirects\Api\Data\RedirectRuleInterface;
 use Panth\Redirects\Controller\Adminhtml\AbstractAction;
+use Panth\Redirects\Model\Config\Source\StatusCode;
 use Panth\Redirects\Model\Redirect\Loop;
 
 /**
@@ -58,7 +59,7 @@ class Save extends AbstractAction implements HttpPostActionInterface
         }
 
         $statusCode = (int) ($data['status_code'] ?? 301);
-        if (!in_array($statusCode, [301, 302, 303, 307, 308, 410, 451, 503], true)) {
+        if (!in_array($statusCode, StatusCode::ALLOWED, true)) {
             $this->messageManager->addErrorMessage(__('Invalid status code.'));
             return $resultRedirect->setPath('*/*/edit', ['id' => $id]);
         }
