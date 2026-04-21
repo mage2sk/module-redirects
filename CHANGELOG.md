@@ -30,6 +30,12 @@ project adheres to [Semantic Versioning](https://semver.org/).
   observer had a chance to issue the 301, so a matched redirect was
   still counted as a 404. Both now consult the matcher and skip logging
   when a redirect rule is about to fire.
+- **Duplicate-pattern priority was reversed in the matcher.** When two
+  literal rows shared a normalized pattern, the last row fetched from
+  the DB overwrote the first in the in-memory hash — so the row with
+  the higher priority number (lower priority) won. Matcher now keeps
+  the first occurrence, honouring the `priority ASC, redirect_id ASC`
+  sort applied at query time.
 
 ## [1.0.0] - Initial release
 

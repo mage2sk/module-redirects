@@ -205,7 +205,13 @@ class Matcher implements RedirectMatcherInterface
         foreach ($conn->fetchAll($select) as $row) {
             $matchType = (string) ($row['match_type'] ?? RedirectRuleInterface::MATCH_LITERAL);
             if ($matchType === RedirectRuleInterface::MATCH_LITERAL) {
-                $literal[$this->normalize((string) $row['pattern'])] = $row;
+                // DB is ordered priority ASC, redirect_id ASC — the first row for
+                // a given normalized pattern is the priority winner. Later rows
+                // with the same pattern must not overwrite it.
+                $key = $this->normalize((string) $row['pattern']);
+                if (!isset($literal[$key])) {
+                    $literal[$key] = $row;
+                }
             } else {
                 $regex[] = $row;
             }
