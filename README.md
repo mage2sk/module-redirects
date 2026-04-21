@@ -25,6 +25,62 @@
 
 ---
 
+## Screenshots
+
+### Redirects grid — at-a-glance rule management
+
+![Redirects grid](docs/screenshots/02-redirects-grid.png)
+
+Colour-coded status codes, sortable columns, per-row hit counter,
+scheduling windows and in-grid filters. Import CSV / Export CSV / Add
+Redirect are one click away.
+
+### Edit Redirect — full status-code picker
+
+<table>
+  <tr>
+    <td><img src="docs/screenshots/04-edit-permanent.png" alt="Edit a 301 literal redirect"></td>
+    <td><img src="docs/screenshots/03-edit-maintenance.png" alt="Edit a 503 maintenance rule"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Literal 301 redirect</sub></td>
+    <td align="center"><sub>Maintenance mode → HTTP 503</sub></td>
+  </tr>
+</table>
+
+The Redirect Type dropdown offers every supported HTTP code:
+**301, 302, 303, 307, 308, 410, 451** and **503**. Pattern, target,
+store scope, active toggle, priority and scheduling are all editable
+per-rule.
+
+### CSV Import — bulk-load with a downloadable template
+
+![Import Redirects from CSV](docs/screenshots/01-import-csv.png)
+
+Upload a header-first CSV to bulk-import redirects. A **Download sample
+CSV** link emits a ready-to-edit template with one row per supported
+match type so the column order and value shape are obvious.
+
+### 404 Log — every unmatched URL
+
+![404 Log grid](docs/screenshots/05-404-log.png)
+
+Per-store log of every path that did not match a catalogue entry or a
+redirect rule. Referer, user-agent and hit count are de-duplicated on
+`(store_id, sha256(path))` so a flood of 404s can never saturate the
+table. A suggested target column is populated by the clustering cron.
+
+### 404 Clusters — find the pattern behind the noise
+
+![404 Clusters grid](docs/screenshots/06-404-clusters.png)
+
+The clustering cron walks the last seven days of 404 hits, collapses
+`/broken/page-1`, `/broken/page-2`, … into `/broken/page-{n}` and writes
+the top offenders with sample URLs, so a single redirect rule can clean
+up an entire family of dead links.
+
+---
+
 ## Features
 
 - **Redirect grid** with literal, regex and maintenance (503) match types,
