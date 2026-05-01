@@ -65,7 +65,7 @@ class ImportExport
         $rows     = [];
 
         try {
-            $header = fgetcsv($handle);
+            $header = fgetcsv($handle, 0, ',', '"', '\\');
             if ($header === false) {
                 throw new LocalizedException(__('CSV file is empty.'));
             }
@@ -76,7 +76,7 @@ class ImportExport
             }
 
             $lineNo = 1;
-            while (($raw = fgetcsv($handle)) !== false) {
+            while (($raw = fgetcsv($handle, 0, ',', '"', '\\')) !== false) {
                 $lineNo++;
                 if ($raw === [null] || $raw === false) {
                     continue;
@@ -136,7 +136,7 @@ class ImportExport
         if (!is_resource($stream)) {
             throw new LocalizedException(__('Invalid export stream.'));
         }
-        fputcsv($stream, self::HEADER);
+        fputcsv($stream, self::HEADER, ',', '"', '\\');
 
         $conn  = $this->resource->getConnection();
         $table = $this->resource->getTableName('panth_seo_redirect');
@@ -156,7 +156,7 @@ class ImportExport
                 (int) $row['status_code'],
                 (int) $row['priority'],
                 (int) $row['is_active'],
-            ]);
+            ], ',', '"', '\\');
             $count++;
         }
         return $count;
