@@ -4,6 +4,18 @@ All notable changes to this extension are documented here. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.6] - 2026-06-18
+
+### Changed
+
+- Rewrote README to match the standard Panth Infotech template with Quick Answer,
+  Who Is It For, Key Features, Configuration table sourced from system.xml,
+  FAQ, Support table, Quick Links table, and SEO keywords section.
+- Added Screenshots section preserving all existing docs/images references.
+- Added Live Demo & Details badge and Product Page link pointing to the live
+  product page.
+- Added Canonical meta comment in the SEO header block.
+
 ## [1.0.1] - Bug fixes and quality improvements
 
 ### Added
