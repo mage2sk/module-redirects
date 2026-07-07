@@ -11,31 +11,11 @@ use Panth\Redirects\Api\RedirectMatcherInterface;
 use Panth\Redirects\Helper\Config;
 use Psr\Log\LoggerInterface;
 
-/**
- * Two-tier redirect matcher:
- *  - Tier 1: hash table for literal path lookups (O(1))
- *  - Tier 2: compiled regex list (priority-ordered)
- *
- * Loaded once per request and cached in memory AND in Magento cache
- * (tag-invalidated on save/delete).
- *
- * SECURITY — REGEX COMPILATION
- * ----------------------------
- * The `pattern` column is admin-editable. A malformed regex would normally
- * cause `preg_match` to emit a warning and return false; under certain
- * `error_reporting` settings that can convert to an ErrorException and
- * crash the storefront. Every regex match here is wrapped in:
- *   1. @preg_match()   — suppress the PHP warning
- *   2. try { ... } catch (\Throwable)  — swallow any converted exception
- *   3. false-return check                — skip the row if invalid
- * so a single bad regex in the table can never 500 the site.
- */
 class Matcher implements RedirectMatcherInterface
 {
     public const CACHE_TAG = 'panth_redirects_table';
     private const CACHE_KEY_PREFIX = 'panth_redirects_table_';
 
-    /** @var array<int,array{literal:array<string,array<string,mixed>>,regex:array<int,array<string,mixed>>}> */
     private array $memo = [];
 
     public function __construct(
@@ -87,7 +67,6 @@ class Matcher implements RedirectMatcherInterface
                 continue;
             }
 
-            // Expand backreferences in target safely.
             $target = (string) $row['target'];
             try {
                 $expanded = @preg_replace($pattern, $target, $normalized);
@@ -135,9 +114,6 @@ class Matcher implements RedirectMatcherInterface
         $this->notFoundLogger->log($requestPath, $storeId, $referer, $userAgent);
     }
 
-    /**
-     * @param array<string,mixed> $row
-     */
     private function isWithinDateRange(array $row): bool
     {
         $now = new \DateTimeImmutable('now', new \DateTimeZone('UTC'));
@@ -151,7 +127,6 @@ class Matcher implements RedirectMatcherInterface
                     return false;
                 }
             } catch (\Throwable) {
-                // Invalid date — ignore the constraint.
             }
         }
 
@@ -162,16 +137,12 @@ class Matcher implements RedirectMatcherInterface
                     return false;
                 }
             } catch (\Throwable) {
-                // Invalid date — ignore the constraint.
             }
         }
 
         return true;
     }
 
-    /**
-     * @return array{literal:array<string,array<string,mixed>>,regex:array<int,array<string,mixed>>}
-     */
     private function loadTable(int $storeId): array
     {
         if (isset($this->memo[$storeId])) {
@@ -182,13 +153,11 @@ class Matcher implements RedirectMatcherInterface
         $cached   = $this->cache->load($cacheKey);
         if (is_string($cached) && $cached !== '') {
             try {
-                /** @var array{literal:array,regex:array} $decoded */
                 $decoded = $this->serializer->unserialize($cached);
                 if (is_array($decoded) && isset($decoded['literal'], $decoded['regex'])) {
                     return $this->memo[$storeId] = $decoded;
                 }
             } catch (\Throwable) {
-                // fall through
             }
         }
 
@@ -205,9 +174,6 @@ class Matcher implements RedirectMatcherInterface
         foreach ($conn->fetchAll($select) as $row) {
             $matchType = (string) ($row['match_type'] ?? RedirectRuleInterface::MATCH_LITERAL);
             if ($matchType === RedirectRuleInterface::MATCH_LITERAL) {
-                // DB is ordered priority ASC, redirect_id ASC — the first row for
-                // a given normalized pattern is the priority winner. Later rows
-                // with the same pattern must not overwrite it.
                 $key = $this->normalize((string) $row['pattern']);
                 if (!isset($literal[$key])) {
                     $literal[$key] = $row;
@@ -251,26 +217,19 @@ class Matcher implements RedirectMatcherInterface
         return $path;
     }
 
-    /**
-     * Compile a user-supplied regex pattern. Returns the compiled PCRE
-     * expression or null if the pattern is invalid / unsafe.
-     *
-     * The compilation itself is guarded with @-suppression and try/catch
-     * so a malformed pattern only ever logs, never crashes.
-     */
     private function compile(string $pattern): ?string
     {
         $pattern = trim($pattern);
         if ($pattern === '') {
             return null;
         }
-        // If user supplies ~..~ or /../ treat as pre-delimited, else wrap in ~...~
+
         if (@preg_match('/^([~\/#!@%]).*\1[a-zA-Z]*$/s', $pattern)) {
             $compiled = $pattern;
         } else {
             $compiled = '~' . str_replace('~', '\\~', $pattern) . '~';
         }
-        // Validate that the compiled pattern is actually parseable by PCRE.
+
         try {
             $test = @preg_match($compiled, '');
         } catch (\Throwable $e) {
@@ -300,9 +259,6 @@ class Matcher implements RedirectMatcherInterface
         return $target;
     }
 
-    /**
-     * @param array<string,mixed> $row
-     */
     private function hydrate(array $row): ?RedirectRuleInterface
     {
         $target = $this->sanitizeTarget((string) ($row['target'] ?? ''));

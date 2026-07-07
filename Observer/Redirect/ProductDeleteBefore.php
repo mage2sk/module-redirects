@@ -12,11 +12,6 @@ use Panth\Redirects\Helper\Config;
 use Panth\Redirects\Model\Redirect\AutoRedirectService;
 use Psr\Log\LoggerInterface;
 
-/**
- * Observer on `model_delete_before` — runs for every model, strict type
- * check inside. Creates a 301 redirect from every URL rewrite of the
- * product being deleted to its primary category (or homepage fallback).
- */
 class ProductDeleteBefore implements ObserverInterface
 {
     private const STRATEGY_HOMEPAGE   = 'homepage';
@@ -72,9 +67,6 @@ class ProductDeleteBefore implements ObserverInterface
         }
     }
 
-    /**
-     * @return array<int, array{request_path: string, store_id: int}>
-     */
     private function getProductUrlRewrites(int $productId): array
     {
         $connection = $this->resourceConnection->getConnection();
@@ -85,7 +77,6 @@ class ProductDeleteBefore implements ObserverInterface
             ->where('entity_type = ?', 'product')
             ->where('entity_id = ?', $productId);
 
-        /** @var array<int, array{request_path: string, store_id: int}> $rows */
         $rows = $connection->fetchAll($select);
         return $rows;
     }

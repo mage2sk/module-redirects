@@ -8,10 +8,6 @@ use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\ResourceConnection;
 use Panth\Redirects\Controller\Adminhtml\AbstractAction;
 
-/**
- * Delete a redirect row. POST-only (FormKey-protected) so a drive-by
- * GET from a logged-in admin's browser can't silently wipe a rule.
- */
 class Delete extends AbstractAction implements HttpPostActionInterface
 {
     public const ADMIN_RESOURCE = 'Panth_Redirects::redirects';

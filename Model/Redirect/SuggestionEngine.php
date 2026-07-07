@@ -6,14 +6,9 @@ namespace Panth\Redirects\Model\Redirect;
 use Magento\Framework\App\ResourceConnection;
 use Psr\Log\LoggerInterface;
 
-/**
- * Clusters 404 paths by Levenshtein similarity and proposes targets drawn
- * from the url_rewrite table. Writes suggestions back into
- * panth_seo_404_log.suggested_target.
- */
 class SuggestionEngine
 {
-    private const SIMILARITY_THRESHOLD = 72; // 0..100
+    private const SIMILARITY_THRESHOLD = 72;
     private const MAX_URL_REWRITE_SAMPLE = 20000;
 
     public function __construct(
@@ -77,10 +72,6 @@ class SuggestionEngine
         return $updated;
     }
 
-    /**
-     * @param array<int,string> $candidates
-     * @return array{path:string,score:int}|null
-     */
     private function bestMatch(string $needle, array $candidates): ?array
     {
         $needle = $this->slug($needle);
@@ -112,9 +103,6 @@ class SuggestionEngine
         return null;
     }
 
-    /**
-     * @return array<int,string>
-     */
     private function loadRewrites(string $urlRewriteTable, int $storeId): array
     {
         $conn = $this->resource->getConnection();

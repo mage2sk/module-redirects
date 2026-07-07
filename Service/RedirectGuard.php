@@ -8,24 +8,8 @@ use Magento\Framework\App\Area;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\State;
 
-/**
- * Centralised safety checks for any frontend redirect (trailing-slash,
- * lowercase, homepage, custom rules, etc.).
- *
- * A misfired 301/302 can be catastrophic: on non-GET requests browsers silently
- * convert the method to GET, which turns every AJAX/API POST into a broken GET
- * and 404s it. On XHR requests, a 301 can cause fetch() to follow a redirect
- * the caller never expected.
- *
- * Every redirect path MUST call `isSafeToRedirect()` before issuing a
- * redirect — this is the ONE source of truth.
- */
 class RedirectGuard
 {
-    /**
-     * URL path prefixes that should NEVER be redirected, because they are API
-     * endpoints, asset paths, or handle their own routing.
-     */
     private const SKIP_PREFIXES = [
         '/rest/',
         '/soap/',
@@ -66,7 +50,6 @@ class RedirectGuard
                 return false;
             }
         } catch (\Throwable) {
-            // Area not set yet — fall through.
         }
 
         $uri = (string) $request->getRequestUri();
@@ -102,7 +85,6 @@ class RedirectGuard
                     return true;
                 }
             } catch (\Throwable) {
-                // Ignore.
             }
         }
 
@@ -123,7 +105,6 @@ class RedirectGuard
                     return $value;
                 }
             } catch (\Throwable) {
-                // Ignore.
             }
         }
 
@@ -134,7 +115,6 @@ class RedirectGuard
                     return $value;
                 }
             } catch (\Throwable) {
-                // Ignore.
             }
         }
 
@@ -145,7 +125,6 @@ class RedirectGuard
                     return $value;
                 }
             } catch (\Throwable) {
-                // Ignore.
             }
         }
 
@@ -164,7 +143,6 @@ class RedirectGuard
                 return true;
             }
         } catch (\Throwable) {
-            // Fall through.
         }
         if (stripos($uri, '/admin') === 0) {
             return true;

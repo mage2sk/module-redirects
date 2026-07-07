@@ -8,10 +8,6 @@ use Magento\Framework\App\RequestInterface;
 use Magento\UrlRewrite\Controller\Router;
 use Panth\Redirects\Service\RedirectGuard;
 
-/**
- * Block Magento core's UrlRewrite router from issuing a 301 on XHR / non-GET
- * requests.
- */
 class RouterXhrGuard
 {
     public function __construct(

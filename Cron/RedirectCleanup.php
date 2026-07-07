@@ -8,12 +8,6 @@ use Magento\Framework\Stdlib\DateTime\DateTime;
 use Panth\Redirects\Helper\Config;
 use Psr\Log\LoggerInterface;
 
-/**
- * Periodic redirect cleanup:
- *  1. Deletes redirects whose `finish_at` is in the past (expired schedule).
- *  2. Deletes auto-generated redirects older than `expiry_days` that have
- *     never been hit. Admin-curated rows are ALWAYS preserved.
- */
 class RedirectCleanup
 {
     private const TABLE = 'panth_seo_redirect';

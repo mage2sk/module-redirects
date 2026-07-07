@@ -11,9 +11,6 @@ use Panth\Redirects\Api\RedirectMatcherInterface;
 use Panth\Redirects\Helper\Config;
 use Psr\Log\LoggerInterface;
 
-/**
- * Logs 404s on cms_index_noroute dispatch.
- */
 class NoRoute implements ObserverInterface
 {
     public function __construct(
@@ -34,10 +31,6 @@ class NoRoute implements ObserverInterface
             $storeId = (int) $this->storeManager->getStore()->getId();
             $path    = (string) $this->request->getPathInfo();
 
-            // `cms_index_noroute` fires before `controller_action_predispatch`
-            // on the noroute action, so our Predispatch observer hasn't yet
-            // had a chance to issue the 301. Skip logging when a matching
-            // redirect rule exists — that path is not a real 404.
             if ($this->matcher->match($path, $storeId) !== null) {
                 return;
             }

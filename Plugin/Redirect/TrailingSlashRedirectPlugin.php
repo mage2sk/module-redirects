@@ -12,9 +12,6 @@ use Panth\Redirects\Helper\Config;
 use Panth\Redirects\Service\RedirectGuard;
 use Psr\Log\LoggerInterface;
 
-/**
- * 301-redirect URLs with a trailing slash to the version without.
- */
 class TrailingSlashRedirectPlugin
 {
     public function __construct(

@@ -7,25 +7,8 @@ use Magento\Framework\App\ResourceConnection;
 use Panth\Redirects\Helper\Config;
 use Psr\Log\LoggerInterface;
 
-/**
- * Logs 404s into `panth_seo_404_log` with hit counter and last_seen timestamp.
- *
- * Uses `INSERT ... ON DUPLICATE KEY UPDATE` on (store_id, path_hash) so a
- * single row per (store, path) is kept regardless of how often the 404 fires.
- *
- * SECURITY HARDENING
- * ------------------
- * 1. All values are bound via parameter placeholders — never string-concat —
- *    so user-supplied referer / UA / path strings can never inject SQL.
- * 2. The path_hash comes from sha256(store_id|path), so a pathological path
- *    can never break the unique-key lookup.
- * 3. Per-IP rate limiting is applied in-process: we keep a micro-scale
- *    counter in an APCu bucket (or static array fallback) so an attacker
- *    hammering a single 404 URL cannot saturate the log table with inserts.
- */
 class NotFoundLogger
 {
-    /** Keep a tiny in-process bucket for the fallback path when APCu is missing. */
     private static array $fallbackBuckets = [];
 
     public function __construct(
@@ -42,8 +25,6 @@ class NotFoundLogger
             return;
         }
 
-        // Rate limit: drop silently if this IP has already inserted too many
-        // rows this second. Uses APCu if available, else a process-local array.
         if (!$this->acquireRateSlot($storeId)) {
             return;
         }
@@ -59,7 +40,6 @@ class NotFoundLogger
             $userAgentValue = $userAgent !== null ? (string) substr($userAgent, 0, 512) : '';
             $pathValue      = (string) substr($path, 0, 1024);
 
-            // Parameterised statement — never build SQL from user strings.
             $conn->query(
                 "INSERT INTO {$table} (store_id, request_path, path_hash, referer, user_agent, hit_count, first_seen_at, last_seen_at) "
                 . "VALUES (?, ?, ?, ?, ?, 1, ?, ?) "
@@ -73,11 +53,6 @@ class NotFoundLogger
         }
     }
 
-    /**
-     * Returns false when the current (ip, store, second) bucket already has
-     * `rate_limit_per_second` inserts this second. Uses APCu when available
-     * (multi-process), falls back to a static array (per-worker) otherwise.
-     */
     private function acquireRateSlot(int $storeId): bool
     {
         $limit = $this->config->getLog404RateLimit($storeId);
@@ -93,7 +68,7 @@ class NotFoundLogger
             $success = false;
             $current = (int) @apcu_fetch($key, $success);
             if (!$success) {
-                @apcu_store($key, 1, 2); // 2-second TTL is enough
+                @apcu_store($key, 1, 2);
                 return true;
             }
             if ($current >= $limit) {
@@ -103,17 +78,12 @@ class NotFoundLogger
             return true;
         }
 
-        // Fallback: per-worker static array with second-level expiry. This is
-        // best-effort under php-fpm — each worker tracks its own bucket — but
-        // is still sufficient to kill the pathological "one request, thousands
-        // of insert attempts" case this defends against.
         $current = self::$fallbackBuckets[$key] ?? 0;
         if ($current >= $limit) {
             return false;
         }
         self::$fallbackBuckets[$key] = $current + 1;
 
-        // Bound memory: drop any bucket that isn't for the current second.
         foreach (array_keys(self::$fallbackBuckets) as $existing) {
             $parts = explode('_', $existing);
             $ts    = (int) end($parts);

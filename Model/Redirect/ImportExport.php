@@ -9,23 +9,6 @@ use Panth\Redirects\Api\Data\RedirectRuleInterface;
 use Panth\Redirects\Model\Config\Source\StatusCode;
 use Psr\Log\LoggerInterface;
 
-/**
- * CSV import/export for redirects.
- *
- * CSV header (order insensitive, names case-insensitive):
- *   store_id,match_type,pattern,target,status_code,priority,is_active
- *
- * SECURITY
- * --------
- *  - Reads via fgetcsv() on a file handle, never str_getcsv() on raw body.
- *  - Validates match_type, status_code and regex syntax per row.
- *  - Runs loop detection for literal rows and SKIPS offenders with a
- *    loop-chain error rather than persisting an infinite redirect chain.
- *  - Strips formula-injection chars (= + - @ \t \r) from the head of each
- *    cell so a hostile CSV can't execute a formula when re-opened in Excel.
- *  - Blocks dangerous URI schemes (javascript:, data:, vbscript:) in the
- *    target column.
- */
 class ImportExport
 {
     public const HEADER = [
@@ -45,9 +28,6 @@ class ImportExport
     ) {
     }
 
-    /**
-     * @return array{imported:int,skipped:int,errors:array<int,string>,rows:array<int,array<string,mixed>>}
-     */
     public function import(string $filePath, bool $dryRun = false): array
     {
         if (!is_file($filePath) || !is_readable($filePath)) {
@@ -81,7 +61,7 @@ class ImportExport
                 if ($raw === [null] || $raw === false) {
                     continue;
                 }
-                /** @var array<string,mixed>|false $row */
+
                 $row = array_combine($header, array_pad($raw, count($header), ''));
                 if (!is_array($row)) {
                     $errors[] = "Line {$lineNo}: malformed";
@@ -127,10 +107,6 @@ class ImportExport
         ];
     }
 
-    /**
-     * @param int[]|null $storeIds
-     * @param resource   $stream
-     */
     public function exportToStream($stream, ?array $storeIds = null): int
     {
         if (!is_resource($stream)) {
@@ -162,9 +138,6 @@ class ImportExport
         return $count;
     }
 
-    /**
-     * @param array<string,mixed> $row
-     */
     private function validateRow(array $row): ?string
     {
         $matchType = (string) $row['match_type'];
@@ -206,9 +179,6 @@ class ImportExport
         return ltrim($value, "=+\-@\t\r");
     }
 
-    /**
-     * @param array<string,mixed> $row
-     */
     private function persist(array $row): void
     {
         $conn  = $this->resource->getConnection();

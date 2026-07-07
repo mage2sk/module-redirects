@@ -6,12 +6,6 @@ namespace Panth\Redirects\Model\Redirect;
 use Magento\Framework\App\ResourceConnection;
 use Psr\Log\LoggerInterface;
 
-/**
- * Atomic hit-counter service for redirect rules.
- *
- * `hit_count = hit_count + 1` is an atomic UPDATE with no preceding SELECT,
- * so no lost increments are possible under concurrent traffic.
- */
 class HitTracker
 {
     private const TABLE = 'panth_seo_redirect';

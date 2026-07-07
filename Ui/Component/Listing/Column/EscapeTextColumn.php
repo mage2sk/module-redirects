@@ -8,12 +8,6 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
 
-/**
- * Render a freeform text cell (referer, user_agent, request path) via
- * `escapeHtml()`. Untrusted strings captured by the 404 logger must NEVER
- * reach the admin grid as raw HTML — an attacker could have submitted a
- * malformed referer that contains script tags or an `onerror=` attribute.
- */
 class EscapeTextColumn extends Column
 {
     public function __construct(

@@ -5,10 +5,6 @@ namespace Panth\Redirects\Model\Redirect;
 
 use Magento\Framework\App\ResourceConnection;
 
-/**
- * BFS loop detection over the redirect graph (literal edges only — regex
- * redirects are inherently dynamic and excluded from static cycle analysis).
- */
 class Loop
 {
     private const MAX_DEPTH = 25;
@@ -18,12 +14,6 @@ class Loop
     ) {
     }
 
-    /**
-     * Returns the chain of paths if a loop/chain-too-long is detected,
-     * or an empty array if the edge (from -> to) is safe.
-     *
-     * @return array<int,string>
-     */
     public function detect(string $from, string $to, int $storeId, ?int $ignoreRedirectId = null): array
     {
         $from = $this->normalize($from);
@@ -57,9 +47,6 @@ class Loop
         return [];
     }
 
-    /**
-     * @return array<string,string>
-     */
     private function loadLiteralGraph(int $storeId, ?int $ignoreRedirectId): array
     {
         $conn  = $this->resource->getConnection();

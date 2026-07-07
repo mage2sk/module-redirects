@@ -10,10 +10,6 @@ use Panth\Redirects\Helper\Config;
 use Panth\Redirects\Model\Redirect\AutoRedirectService;
 use Psr\Log\LoggerInterface;
 
-/**
- * Observer on `model_delete_before` (CMS page). Creates a 301 redirect
- * from the CMS page identifier to the homepage.
- */
 class CmsPageDeleteBefore implements ObserverInterface
 {
     public function __construct(

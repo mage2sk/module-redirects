@@ -11,10 +11,6 @@ use Panth\Redirects\Helper\Config;
 use Panth\Redirects\Model\Redirect\NotFoundLogger;
 use Psr\Log\LoggerInterface;
 
-/**
- * Logs 404 requests when the NoRouteHandler processes them.
- * This fires for ALL 404s regardless of how the no-route is handled.
- */
 class NoRouteLoggerPlugin
 {
     public function __construct(
@@ -39,9 +35,6 @@ class NoRouteLoggerPlugin
             $storeId = (int) $this->storeManager->getStore()->getId();
             $path    = (string) $request->getPathInfo();
 
-            // This plugin runs BEFORE our Predispatch observer has a chance
-            // to intercept the request with a 301. Consult the matcher first
-            // so we don't record a 404 for a path that is about to redirect.
             if ($this->matcher->match($path, $storeId) !== null) {
                 return $result;
             }

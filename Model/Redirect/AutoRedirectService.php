@@ -8,19 +8,6 @@ use Magento\Store\Model\StoreManagerInterface;
 use Panth\Redirects\Api\Data\RedirectRuleInterface;
 use Psr\Log\LoggerInterface;
 
-/**
- * Shared service for programmatically creating redirect rows in the
- * `panth_seo_redirect` table. Used by the auto-redirect observers when
- * products, categories or CMS pages are deleted.
- *
- * SECURITY
- * --------
- * The target is validated against the `isSafeTarget()` rules: no dangerous
- * URI schemes, no external hosts outside the configured store base URLs,
- * no `..` path traversal and no control characters. Unsafe targets are
- * logged and dropped instead of persisted, so an attacker-controlled
- * "custom URL" strategy value can never become a persistent open-redirect.
- */
 class AutoRedirectService
 {
     private const TABLE = 'panth_seo_redirect';
@@ -57,7 +44,6 @@ class AutoRedirectService
             $connection = $this->resourceConnection->getConnection();
             $table = $this->resourceConnection->getTableName(self::TABLE);
 
-            // Check for existing redirect with same pattern and store_id to avoid duplicates.
             $select = $connection->select()
                 ->from($table, [RedirectRuleInterface::REDIRECT_ID])
                 ->where(RedirectRuleInterface::PATTERN . ' = ?', $sourcePath)

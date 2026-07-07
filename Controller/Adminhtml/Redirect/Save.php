@@ -12,20 +12,6 @@ use Panth\Redirects\Controller\Adminhtml\AbstractAction;
 use Panth\Redirects\Model\Config\Source\StatusCode;
 use Panth\Redirects\Model\Redirect\Loop;
 
-/**
- * Save a redirect row. POST-only, FormKey validated.
- *
- * SECURITY
- * --------
- *  - Every request parameter is cast to its expected scalar type before
- *    use.
- *  - Allow-lists are applied to match_type and status_code — arbitrary
- *    values would otherwise stick in the DB and break the Matcher.
- *  - The target column is checked for dangerous URI schemes and rejected
- *    before any DB write.
- *  - For literal rules, the loop detector runs so an admin can't create
- *    a redirect chain that would trap the Matcher.
- */
 class Save extends AbstractAction implements HttpPostActionInterface
 {
     public const ADMIN_RESOURCE = 'Panth_Redirects::redirects';
@@ -76,8 +62,6 @@ class Save extends AbstractAction implements HttpPostActionInterface
             return $resultRedirect->setPath('*/*/edit', ['id' => $id]);
         }
 
-        // Validate regex actually compiles — a bad regex would otherwise be
-        // silently skipped at runtime by the Matcher.
         if ($matchType === RedirectRuleInterface::MATCH_REGEX) {
             $wrapped = '~' . str_replace('~', '\\~', $pattern) . '~';
             try {

@@ -8,10 +8,6 @@ use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Response\Http\FileFactory;
 use Panth\Redirects\Controller\Adminhtml\AbstractAction;
 
-/**
- * Serves a ready-to-edit sample CSV so admins can download a template
- * file from the Import screen and fill in their own rows.
- */
 class SampleCsv extends AbstractAction implements HttpGetActionInterface
 {
     public const ADMIN_RESOURCE = 'Panth_Redirects::redirects';

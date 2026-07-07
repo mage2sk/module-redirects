@@ -7,10 +7,6 @@ use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Psr\Log\LoggerInterface;
 
-/**
- * Clusters recent 404 URLs by normalised path and writes top offenders to
- * `panth_seo_404_cluster` so admins can create redirects in bulk.
- */
 class NotFoundCluster
 {
     private const LOOKBACK_DAYS = 7;

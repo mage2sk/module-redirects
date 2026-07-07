@@ -13,9 +13,6 @@ class Collection extends AbstractCollection implements SearchResultInterface
 {
     protected $_idFieldName = 'redirect_id';
 
-    /**
-     * @var \Magento\Framework\Api\Search\AggregationInterface
-     */
     private $aggregations;
 
     protected function _construct(): void

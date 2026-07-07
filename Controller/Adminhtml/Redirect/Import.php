@@ -10,21 +10,6 @@ use Magento\Framework\Filesystem;
 use Panth\Redirects\Controller\Adminhtml\AbstractAction;
 use Panth\Redirects\Model\Redirect\ImportExport;
 
-/**
- * Uploads a CSV file and imports it via the ImportExport service.
- *
- * SECURITY
- * --------
- *  - POST-only, ACL-protected, FormKey-protected (via Magento\Backend\App\Action).
- *  - MIME type validated via finfo.
- *  - File extension validated.
- *  - Upload size validated against a hard 10 MB cap.
- *  - File moved into var/ (out of web root) using an unpredictable random
- *    name, parsed with fgetcsv() (never str_getcsv on raw body), then
- *    deleted on completion.
- *  - Loop detection runs inside the ImportExport service so invalid rows
- *    are skipped and reported rather than persisted.
- */
 class Import extends AbstractAction implements HttpPostActionInterface
 {
     public const ADMIN_RESOURCE = 'Panth_Redirects::redirects';

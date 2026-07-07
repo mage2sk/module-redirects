@@ -16,10 +16,6 @@ use Panth\Redirects\Helper\Config;
 use Panth\Redirects\Service\RedirectGuard;
 use Psr\Log\LoggerInterface;
 
-/**
- * controller_action_predispatch observer. Runs the Matcher; on a hit,
- * issues the redirect and stops action dispatch.
- */
 class Predispatch implements ObserverInterface
 {
     public function __construct(
@@ -96,8 +92,6 @@ class Predispatch implements ObserverInterface
                     $this->response->setRedirect($target, $status);
                 }
             } else {
-                // 4xx/5xx (410, 451, 503): no Location header — emit status
-                // and a short body so the client doesn't follow to `target`.
                 if (method_exists($this->response, 'setStatusHeader')) {
                     $this->response->setStatusHeader($status, null, $this->reasonPhrase($status));
                 }

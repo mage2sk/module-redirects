@@ -11,11 +11,6 @@ use Panth\Redirects\Helper\Config;
 use Panth\Redirects\Model\Redirect\AutoRedirectService;
 use Psr\Log\LoggerInterface;
 
-/**
- * Observer on `model_delete_before` (category). Creates a 301 redirect from
- * the category URL to its parent category URL. If the category is root or
- * top-level, redirects to homepage.
- */
 class CategoryDeleteBefore implements ObserverInterface
 {
     public function __construct(
@@ -65,9 +60,6 @@ class CategoryDeleteBefore implements ObserverInterface
         }
     }
 
-    /**
-     * @return array<int, array{request_path: string, store_id: int}>
-     */
     private function getCategoryUrlRewrites(int $categoryId): array
     {
         $connection = $this->resourceConnection->getConnection();
@@ -78,7 +70,6 @@ class CategoryDeleteBefore implements ObserverInterface
             ->where('entity_type = ?', 'category')
             ->where('entity_id = ?', $categoryId);
 
-        /** @var array<int, array{request_path: string, store_id: int}> $rows */
         $rows = $connection->fetchAll($select);
         return $rows;
     }

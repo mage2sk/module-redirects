@@ -13,13 +13,8 @@ use Panth\Redirects\Helper\Config;
 use Panth\Redirects\Service\RedirectGuard;
 use Psr\Log\LoggerInterface;
 
-/**
- * 301-redirect common homepage aliases (/index.php, /home, /cms/index, etc.)
- * to the store root.
- */
 class HomepageRedirectPlugin
 {
-    /** @var string[] */
     private const HOMEPAGE_ALIASES = [
         '/index.php',
         '/home',
@@ -27,10 +22,6 @@ class HomepageRedirectPlugin
         '/cms/index/index',
     ];
 
-    /**
-     * HEAD is body-less and idempotent — included alongside GET so crawlers
-     * and monitoring probes see the same 301 as a normal browser.
-     */
     private const REDIRECTABLE_METHODS = ['GET', 'HEAD'];
 
     public function __construct(

@@ -6,12 +6,6 @@ namespace Panth\Redirects\Helper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 
-/**
- * Typed config accessor for every `panth_redirects/*` admin field.
- *
- * Keeping all config paths behind this class means any future rename can
- * be done in one place and the rest of the module stays source-stable.
- */
 class Config
 {
     public const XML_GENERAL_ENABLED             = 'panth_redirects/general/enabled';
@@ -85,11 +79,6 @@ class Config
         return $limit > 0 ? $limit : 10;
     }
 
-    /**
-     * Raw value accessor for paths this helper does not yet wrap in a typed
-     * method. Keeps third-party callers honest — they still go through the
-     * helper instead of reaching into ScopeConfigInterface directly.
-     */
     public function getValue(string $path, ?int $storeId = null): mixed
     {
         return $this->value($path, $storeId);

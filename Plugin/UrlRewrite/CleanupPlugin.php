@@ -10,12 +10,6 @@ use Magento\UrlRewrite\Model\UrlRewrite as UrlRewriteModel;
 use Panth\Redirects\Helper\Config;
 use Psr\Log\LoggerInterface;
 
-/**
- * Watches UrlRewrite saves for slug changes on products and writes a
- * corresponding row into `panth_seo_redirect` so the Matcher picks up the
- * 301 automatically. Dedupes on (store_id, pattern) so repeated slug
- * changes keep refreshing the target instead of piling up chains.
- */
 class CleanupPlugin
 {
     private const REDIRECT_TABLE = 'panth_seo_redirect';

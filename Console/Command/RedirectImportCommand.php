@@ -34,7 +34,6 @@ class RedirectImportCommand extends Command
         try {
             $this->appState->setAreaCode(Area::AREA_ADMINHTML);
         } catch (\Throwable) {
-            // already set
         }
 
         $file   = (string) $input->getArgument('file');

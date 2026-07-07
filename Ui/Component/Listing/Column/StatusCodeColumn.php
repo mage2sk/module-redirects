@@ -8,13 +8,6 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
 
-/**
- * Custom column renderer that colour-codes HTTP status codes.
- *
- *  200        — green
- *  301 / 302  — yellow / orange
- *  404 / 5xx  — red
- */
 class StatusCodeColumn extends Column
 {
     public function __construct(
