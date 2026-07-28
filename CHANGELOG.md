@@ -4,6 +4,11 @@ All notable changes to this extension are documented here. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.0.8]
+
+### Changed
+- Replaced typographic characters (em dashes, curly quotes, ellipsis) with plain ASCII punctuation. No functional changes.
+
 ## [1.0.7]
 
 ### Changed
@@ -25,7 +30,7 @@ project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- **Full HTTP status code picker** on the admin form — the Redirect Type
+- **Full HTTP status code picker** on the admin form - the Redirect Type
   dropdown now offers every supported code (301, 302, 303, 307, 308, 410,
   451, 503) instead of only 301/302. Codes are served from a shared
   `Panth\Redirects\Model\Config\Source\StatusCode` source so the admin
@@ -34,7 +39,7 @@ project adheres to [Semantic Versioning](https://semver.org/).
   ready-to-edit template with one row per supported match type so admins
   can see the exact column order / value shape before uploading.
 - **Non-redirect status codes (410, 451, 503)** are now handled properly
-  by the frontend dispatcher — `setStatusHeader` + body, no bogus
+  by the frontend dispatcher - `setStatusHeader` + body, no bogus
   `Location` header. 503 still emits `Retry-After`.
 
 ### Fixed
@@ -49,7 +54,7 @@ project adheres to [Semantic Versioning](https://semver.org/).
   when a redirect rule is about to fire.
 - **Duplicate-pattern priority was reversed in the matcher.** When two
   literal rows shared a normalized pattern, the last row fetched from
-  the DB overwrote the first in the in-memory hash — so the row with
+  the DB overwrote the first in the in-memory hash - so the row with
   the higher priority number (lower priority) won. Matcher now keeps
   the first occurrence, honouring the `priority ASC, redirect_id ASC`
   sort applied at query time.

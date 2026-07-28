@@ -46,7 +46,7 @@ class RedirectImportCommand extends Command
         }
 
         $output->writeln(sprintf(
-            '<info>%s complete — imported=%d skipped=%d errors=%d</info>',
+            '<info>%s complete - imported=%d skipped=%d errors=%d</info>',
             $dryRun ? 'Dry-run' : 'Import',
             $result['imported'],
             $result['skipped'],

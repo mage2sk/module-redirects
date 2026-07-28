@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Panth Redirects — frontend-only DI.
+ * Panth Redirects - frontend-only DI.
  *
  * These plugins intentionally live in etc/frontend/di.xml and NEVER in
  * etc/di.xml. Admin, API, and cron requests MUST NOT be processed by

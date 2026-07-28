@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Panth Redirects — Admin menu
+ * Panth Redirects - Admin menu
  * Adds four links under Panth Infotech: Manage Redirects (grid),
  * 404 Log, 404 Clusters and Configuration.
  */

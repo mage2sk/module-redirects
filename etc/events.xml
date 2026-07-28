@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Panth Redirects — auto-redirect observers.
+ * Panth Redirects - auto-redirect observers.
  *
  * We subscribe to `model_delete_before` (dispatched first in
  * AbstractModel::beforeDelete) rather than `catalog_product_delete_before`

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Panth Redirects — frontend-only observers.
+ * Panth Redirects - frontend-only observers.
  *  - cms_index_noroute: log 404 hits
  *  - controller_action_predispatch: match and fire redirect BEFORE the
  *    controller dispatches, so route resolution does not 404 first.

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!--
 /**
- * Panth Redirects — DB schema.
+ * Panth Redirects - DB schema.
  *
  * Table names are kept identical to the original Panth_AdvancedSEO schema
  * (`panth_seo_redirect`, `panth_seo_404_log`, `panth_seo_404_cluster`) so that

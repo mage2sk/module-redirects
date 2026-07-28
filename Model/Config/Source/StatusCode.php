@@ -13,7 +13,7 @@ class StatusCode implements OptionSourceInterface
     {
         return [
             ['value' => 301, 'label' => (string) __('301 (Moved Permanently)')],
-            ['value' => 302, 'label' => (string) __('302 (Found — Temporary)')],
+            ['value' => 302, 'label' => (string) __('302 (Found - Temporary)')],
             ['value' => 303, 'label' => (string) __('303 (See Other)')],
             ['value' => 307, 'label' => (string) __('307 (Temporary Redirect)')],
             ['value' => 308, 'label' => (string) __('308 (Permanent Redirect)')],
