@@ -13,6 +13,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Panth\Redirects\Api\Data\RedirectRuleInterface;
 use Panth\Redirects\Api\RedirectMatcherInterface;
 use Panth\Redirects\Helper\Config;
+use Panth\Redirects\Model\Redirect\PathNormalizer;
 use Panth\Redirects\Service\RedirectGuard;
 use Psr\Log\LoggerInterface;
 
@@ -26,7 +27,8 @@ class Predispatch implements ObserverInterface
         private readonly ActionFlag $actionFlag,
         private readonly Config $config,
         private readonly LoggerInterface $logger,
-        private readonly RedirectGuard $redirectGuard
+        private readonly RedirectGuard $redirectGuard,
+        private readonly PathNormalizer $pathNormalizer
     ) {
     }
 
@@ -44,9 +46,19 @@ class Predispatch implements ObserverInterface
             }
 
             $storeId = (int) $this->storeManager->getStore()->getId();
-            $path    = (string) $this->request->getPathInfo();
 
-            $rule = $this->matcher->match($path, $storeId);
+            $routedPath  = $this->pathNormalizer->normalize((string) $this->request->getPathInfo());
+            $rule        = $this->matcher->match($routedPath, $storeId);
+            $matchedPath = $routedPath;
+
+            if ($rule === null && $this->config->isMatchOriginalUriEnabled($storeId)) {
+                $originalPath = $this->originalRequestPath();
+                if ($originalPath !== '' && $originalPath !== $routedPath) {
+                    $rule        = $this->matcher->match($originalPath, $storeId);
+                    $matchedPath = $originalPath;
+                }
+            }
+
             if ($rule === null) {
                 return;
             }
@@ -88,6 +100,9 @@ class Predispatch implements ObserverInterface
             }
             $status = $rule->getStatusCode() ?: 301;
             if ($status >= 300 && $status < 400) {
+                if ($this->isSelfRedirect($matchedPath, $target)) {
+                    return;
+                }
                 if (method_exists($this->response, 'setRedirect')) {
                     $this->response->setRedirect($target, $status);
                 }
@@ -111,6 +126,28 @@ class Predispatch implements ObserverInterface
         } catch (\Throwable $e) {
             $this->logger->warning('[PanthRedirects] redirect predispatch failed: ' . $e->getMessage());
         }
+    }
+
+    private function originalRequestPath(): string
+    {
+        $uri = (string) $this->request->getRequestUri();
+        if ($uri === '') {
+            return '';
+        }
+
+        $basePath = method_exists($this->request, 'getBasePath')
+            ? rtrim((string) $this->request->getBasePath(), '/')
+            : '';
+        if ($basePath !== '' && $basePath !== '/' && strpos($uri, $basePath) === 0) {
+            $uri = substr($uri, strlen($basePath));
+        }
+
+        return $this->pathNormalizer->normalize($uri);
+    }
+
+    private function isSelfRedirect(string $requestPath, string $target): bool
+    {
+        return $this->pathNormalizer->normalize($target) === $this->pathNormalizer->normalize($requestPath);
     }
 
     private function isAllowedHost(string $host): bool

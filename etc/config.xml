@@ -11,6 +11,7 @@
                 <homepage_redirect>1</homepage_redirect>
                 <remove_trailing_slash>0</remove_trailing_slash>
                 <expiry_days>365</expiry_days>
+                <match_original_uri>1</match_original_uri>
             </general>
             <logging>
                 <log_404>1</log_404>

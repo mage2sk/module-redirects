@@ -4,6 +4,15 @@ All notable changes to this extension are documented here. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this
 project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0]
+
+### Added
+- **Redirect rules now also match the original request URI.** A custom router can rewrite the request path during routing (the FAQ and HTML sitemap routers both call `setPathInfo()`), and the redirect observer runs after routing, so it only ever saw the rewritten path and an admin rule keyed on the public slug never fired. When the routed lookup misses, the observer now retries against the normalized path of `getRequestUri()`, which routers do not touch. Existing redirects are unaffected: the routed lookup stays primary and the fallback only runs on a miss and only when the two paths differ. Hit counts and last-hit timestamps work for fallback matches as well.
+- `panth_redirects/general/match_original_uri`, default enabled, turns the fallback off if a store needs the previous behaviour.
+
+### Fixed
+- **A rule whose target equals its source no longer redirects a URL to itself.** Such a row produced an endless 301 loop; the request now falls through untouched.
+
 ## [1.0.8]
 
 ### Changed

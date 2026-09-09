@@ -16,6 +16,7 @@ class Config
     public const XML_HOMEPAGE_REDIRECT           = 'panth_redirects/general/homepage_redirect';
     public const XML_REMOVE_TRAILING_SLASH       = 'panth_redirects/general/remove_trailing_slash';
     public const XML_EXPIRY_DAYS                 = 'panth_redirects/general/expiry_days';
+    public const XML_MATCH_ORIGINAL_URI          = 'panth_redirects/general/match_original_uri';
 
     public const XML_LOG_404                     = 'panth_redirects/logging/log_404';
     public const XML_LOG_404_RATE_LIMIT          = 'panth_redirects/logging/rate_limit_per_second';
@@ -23,6 +24,11 @@ class Config
     public function __construct(
         private readonly ScopeConfigInterface $scopeConfig
     ) {
+    }
+
+    public function isMatchOriginalUriEnabled(?int $storeId = null): bool
+    {
+        return $this->flag(self::XML_MATCH_ORIGINAL_URI, $storeId);
     }
 
     public function isEnabled(?int $storeId = null): bool
