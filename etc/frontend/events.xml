@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Panth Redirects - frontend-only observers.
+ *  - controller_action_predispatch: match and fire redirect BEFORE the
+ *    controller dispatches, so route resolution does not 404 first.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="controller_action_predispatch">
+        <observer name="panth_redirects_predispatch"
+                  instance="Panth\Redirects\Observer\Redirect\Predispatch"/>
+    </event>
+</config>
