@@ -1,0 +1,118 @@
+<?php
+declare(strict_types=1);
+
+namespace Panth\Redirects\Observer\Redirect;
+
+use Magento\Catalog\Model\Category;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Event\Observer;
+use Magento\Framework\Event\ObserverInterface;
+use Panth\Redirects\Helper\Config;
+use Panth\Redirects\Model\Redirect\AutoRedirectService;
+use Psr\Log\LoggerInterface;
+
+class CategoryDeleteBefore implements ObserverInterface
+{
+    public function __construct(
+        private readonly AutoRedirectService $autoRedirectService,
+        private readonly Config $config,
+        private readonly ResourceConnection $resourceConnection,
+        private readonly LoggerInterface $logger
+    ) {
+    }
+
+    public function execute(Observer $observer): void
+    {
+        try {
+            if (!$this->config->isEnabled() || !$this->config->isAutoRedirectEnabled()) {
+                return;
+            }
+
+            $event = $observer->getEvent();
+            $category = $event->getCategory() ?? $event->getObject() ?? $event->getEntity();
+            if (!$category instanceof Category || !$category->getId()) {
+                return;
+            }
+
+            $categoryId = (int) $category->getId();
+            $rewrites = $this->getCategoryUrlRewrites($categoryId);
+
+            if ($rewrites === []) {
+                return;
+            }
+
+            $parentId = (int) $category->getParentId();
+            $targets = [];
+
+            foreach ($rewrites as $rewrite) {
+                $storeId = (int) ($rewrite['store_id'] ?? 0);
+                $sourcePath = (string) ($rewrite['request_path'] ?? '');
+                if ($sourcePath === '') {
+                    continue;
+                }
+                $targets[$storeId] ??= $this->resolveParentUrl($parentId, $storeId);
+                $this->autoRedirectService->createRedirect($sourcePath, $targets[$storeId], $storeId);
+            }
+        } catch (\Throwable $e) {
+            $this->logger->error(
+                '[PanthRedirects] CategoryDeleteBefore observer failed',
+                ['error' => $e->getMessage()]
+            );
+        }
+    }
+
+    private function getCategoryUrlRewrites(int $categoryId): array
+    {
+        $connection = $this->resourceConnection->getConnection();
+        $table = $this->resourceConnection->getTableName('url_rewrite');
+
+        $select = $connection->select()
+            ->from($table, ['request_path', 'store_id'])
+            ->where('entity_type = ?', 'category')
+            ->where('entity_id = ?', $categoryId);
+
+        $rows = $connection->fetchAll($select);
+        return $rows;
+    }
+
+    private function resolveParentUrl(int $parentId, int $storeId): string
+    {
+        if ($parentId <= 1) {
+            return '/';
+        }
+
+        try {
+            $connection = $this->resourceConnection->getConnection();
+
+            $categoryTable = $this->resourceConnection->getTableName('catalog_category_entity');
+            $level = $connection->fetchOne(
+                $connection->select()
+                    ->from($categoryTable, ['level'])
+                    ->where('entity_id = ?', $parentId)
+            );
+
+            if ($level === false || (int) $level <= 1) {
+                return '/';
+            }
+
+            $urlTable = $this->resourceConnection->getTableName('url_rewrite');
+            $parentPath = $connection->fetchOne(
+                $connection->select()
+                    ->from($urlTable, ['request_path'])
+                    ->where('entity_type = ?', 'category')
+                    ->where('entity_id = ?', $parentId)
+                    ->where('metadata IS NULL')
+                    ->where('store_id = ?', $storeId)
+                    ->limit(1)
+            );
+
+            return $parentPath !== false && $parentPath !== '' ? (string) $parentPath : '/';
+        } catch (\Throwable $e) {
+            $this->logger->debug(
+                '[PanthRedirects] Could not resolve parent category URL',
+                ['parent_id' => $parentId, 'error' => $e->getMessage()]
+            );
+            return '/';
+        }
+    }
+}

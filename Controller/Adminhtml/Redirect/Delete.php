@@ -1,0 +1,43 @@
+<?php
+declare(strict_types=1);
+
+namespace Panth\Redirects\Controller\Adminhtml\Redirect;
+
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\App\CacheInterface;
+use Magento\Framework\App\ResourceConnection;
+use Panth\Redirects\Controller\Adminhtml\AbstractAction;
+use Panth\Redirects\Model\Redirect\Matcher;
+
+class Delete extends AbstractAction implements HttpPostActionInterface
+{
+    public const ADMIN_RESOURCE = 'Panth_Redirects::redirects';
+
+    public function __construct(
+        Context $context,
+        private readonly ResourceConnection $resource,
+        private readonly CacheInterface $cache
+    ) {
+        parent::__construct($context);
+    }
+
+    public function execute()
+    {
+        $id = (int) $this->getRequest()->getParam('id');
+        $resultRedirect = $this->resultRedirectFactory->create();
+        if ($id > 0) {
+            try {
+                $this->resource->getConnection()->delete(
+                    $this->resource->getTableName('panth_seo_redirect'),
+                    ['redirect_id = ?' => $id]
+                );
+                $this->cache->clean([Matcher::CACHE_TAG]);
+                $this->messageManager->addSuccessMessage(__('Redirect deleted.'));
+            } catch (\Throwable $e) {
+                $this->messageManager->addErrorMessage($e->getMessage());
+            }
+        }
+        return $resultRedirect->setPath('*/*/');
+    }
+}

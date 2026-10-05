@@ -1,0 +1,68 @@
+{
+    "panth_seo_redirect": {
+        "column": {
+            "redirect_id": true,
+            "store_id": true,
+            "match_type": true,
+            "pattern": true,
+            "target": true,
+            "status_code": true,
+            "priority": true,
+            "is_active": true,
+            "hit_count": true,
+            "last_hit_at": true,
+            "start_at": true,
+            "finish_at": true,
+            "created_at": true,
+            "updated_at": true,
+            "is_auto_generated": true
+        },
+        "index": {
+            "PANTH_SEO_REDIRECT_IDX_STORE_ACTIVE": true,
+            "PANTH_SEO_REDIRECT_IDX_PATTERN": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "PANTH_SEO_REDIRECT_STORE_ID_STORE_STORE_ID": true
+        }
+    },
+    "panth_seo_404_log": {
+        "column": {
+            "log_id": true,
+            "store_id": true,
+            "request_path": true,
+            "path_hash": true,
+            "referer": true,
+            "user_agent": true,
+            "hit_count": true,
+            "cluster_key": true,
+            "suggested_target": true,
+            "first_seen_at": true,
+            "last_seen_at": true
+        },
+        "index": {
+            "PANTH_SEO_404_LOG_IDX_CLUSTER": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "PANTH_SEO_404_LOG_UNQ_STORE_HASH": true
+        }
+    },
+    "panth_seo_404_cluster": {
+        "column": {
+            "cluster_id": true,
+            "store_id": true,
+            "pattern": true,
+            "hits": true,
+            "sample_url": true,
+            "created_at": true
+        },
+        "index": {
+            "PANTH_SEO_404_CLUSTER_IDX_STORE_HITS": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "PANTH_SEO_404_CLUSTER_STORE_ID_STORE_STORE_ID": true
+        }
+    }
+}
