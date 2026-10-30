@@ -271,7 +271,7 @@ The tables `panth_seo_redirect`, `panth_seo_404_log` and `panth_seo_404_cluster`
 
 ## License
 
-Proprietary, as declared in `composer.json`. The package is published on Packagist and can be installed with Composer; see the product page for the terms of use.
+Free and open source under the MIT License. See [LICENSE.txt](LICENSE.txt).
 
 ## Changelog
 

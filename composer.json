@@ -2,8 +2,8 @@
     "name": "mage2kishan/module-redirects",
     "description": "Redirects and 404 management for Magento 2 (Hyva + Luma). Manual + auto redirects, bulk CSV import/export, scheduled cleanup, 404 logging and cluster analysis for redirect recommendations. Extracted from Panth_AdvancedSEO for independent installation.",
     "type": "magento2-module",
-    "version": "1.2.7",
-    "license": "proprietary",
+    "version": "1.2.8",
+    "license": "MIT",
     "keywords": [
         "magento2",
         "magento2-module",
